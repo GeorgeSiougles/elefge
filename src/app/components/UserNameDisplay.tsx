@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 
 const UserNameDisplay = () => {
   const [newName, setNewName] = useState("");
+  const [validationError, setValidationError] = useState("");
   const userNameCtx = useContext(UserNameContext);
   const userNameNotSet = userNameCtx.userName.trim().length === 0;
   let placeholder = userNameCtx.userName;
@@ -16,11 +17,23 @@ const UserNameDisplay = () => {
     buttonLabel = "Clear";
   }
   const handleNewNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.trim().length !== 0) setNewName(event.target.value);
+    setNewName(event.target.value);
+    setValidationError("");
   };
 
   const handleAddNameChange = () => {
-    if (newName.trim().length !== 0) userNameCtx.addUserName(newName);
+    if (newName.trim().length < 3) {
+      setValidationError("user name too short");
+      return;
+    }
+    if (newName.trim().length > 19) {
+      setValidationError("user name too long");
+      return;
+    }
+    if (newName.trim().length !== 0) {
+      userNameCtx.addUserName(newName);
+      setValidationError("");
+    }
   };
   const handleClearName = () => {
     userNameCtx.clearUserName();
@@ -28,20 +41,28 @@ const UserNameDisplay = () => {
   };
   return (
     <div>
-      <input
-        className={`${
-          userNameNotSet
-            ? "placeholder:text-gray-500"
-            : "placeholder:text-black"
-        }`}
-        type="text"
-        placeholder={placeholder}
-        onChange={handleNewNameChange}
-        value={newName}
-      />
-      <button onClick={userNameNotSet ? handleAddNameChange : handleClearName}>
-        {buttonLabel}
-      </button>
+      <div>
+        <input
+          className={`${
+            userNameNotSet
+              ? "placeholder:text-gray-500"
+              : "placeholder:text-black"
+          }`}
+          type="text"
+          placeholder={placeholder}
+          onChange={handleNewNameChange}
+          value={newName}
+          disabled={!userNameNotSet}
+          maxLength={19}
+          minLength={3}
+        />
+        <button
+          onClick={userNameNotSet ? handleAddNameChange : handleClearName}
+        >
+          {buttonLabel}
+        </button>
+      </div>
+      <div>{validationError}</div>
     </div>
   );
 };
