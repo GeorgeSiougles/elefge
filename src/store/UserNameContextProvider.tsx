@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import UserNameContext from "./userName-context";
 
 interface UserNameProviderProps {
@@ -33,14 +33,25 @@ const UserNameProvider: React.FC<UserNameProviderProps> = (props) => {
     userNameReducer,
     defaultUserName
   );
+  useEffect(() => {
+    // Load saved userName from local storage on component mount
+    const savedUserName = localStorage.getItem("userName");
+    if (savedUserName) {
+      dispatchUserNameAction({ type: "ADD", userName: savedUserName });
+    }
+  }, []);
+
   const addUserNameHandler = (userName: string) => {
     dispatchUserNameAction({
       type: "ADD",
       userName: userName,
     });
+    localStorage.setItem("userName", userName);
   };
+
   const clearUserNameHandler = () => {
     dispatchUserNameAction({ type: "CLEAR" });
+    localStorage.removeItem("userName");
   };
 
   const userNameContext = {

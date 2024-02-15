@@ -6,10 +6,10 @@ import { useContext, useState } from "react";
 const UserNameDisplay = () => {
   const [newName, setNewName] = useState("");
   const userNameCtx = useContext(UserNameContext);
-  const useNameNotSet = userNameCtx.userName.trim().length === 0;
+  const userNameNotSet = userNameCtx.userName.trim().length === 0;
   let placeholder = userNameCtx.userName;
   let buttonLabel = "";
-  if (useNameNotSet) {
+  if (userNameNotSet) {
     placeholder = "User.1234 or char name";
     buttonLabel = "Set Name";
   } else {
@@ -29,12 +29,17 @@ const UserNameDisplay = () => {
   return (
     <div>
       <input
+        className={`${
+          userNameNotSet
+            ? "placeholder:text-gray-500"
+            : "placeholder:text-black"
+        }`}
         type="text"
         placeholder={placeholder}
         onChange={handleNewNameChange}
         value={newName}
       />
-      <button onClick={useNameNotSet ? handleAddNameChange : handleClearName}>
+      <button onClick={userNameNotSet ? handleAddNameChange : handleClearName}>
         {buttonLabel}
       </button>
     </div>
