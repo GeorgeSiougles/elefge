@@ -29,10 +29,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <UserNameProvider>
-        <Navbar items={routingOptions} />;
-      </UserNameProvider>
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} bg-teal-600`}>
+        <UserNameProvider>
+          <Navbar items={routingOptions} />
+          {children}
+        </UserNameProvider>
+      </body>
     </html>
   );
 }

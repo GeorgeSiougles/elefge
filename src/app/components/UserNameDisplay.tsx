@@ -62,7 +62,7 @@ const UserNameDisplay = () => {
           {buttonLabel}
         </button>
       </div>
-      <div>{validationError}</div>
+      <div className="text-red-500">{validationError}</div>
     </div>
   );
 };

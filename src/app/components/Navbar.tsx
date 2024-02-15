@@ -11,7 +11,7 @@ interface NavbarProps {
 
 const Navbar = (props: NavbarProps) => {
   return (
-    <nav className="flex justify-between bg-amber-700 h-32 w-screen px-4 items-center">
+    <nav className="flex justify-between bg-amber-700 w-screen p-4 items-center border-b-8 rounded-b-xl border-emerald-700">
       <div className="flex">
         {props.items.map((item, index) => (
           <div
