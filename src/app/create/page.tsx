@@ -2,9 +2,11 @@
 
 import useInput from "@/lib/hooks/use-input";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Page = () => {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     value: enteredActivityName,
@@ -57,13 +59,18 @@ const Page = () => {
   const formSubmitionHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     const createGroupListing = async () => {
-      await axios.post("/api/group/create", {
-        activityName: enteredActivityName,
-        mapName: enteredMapName,
-        maxPlayers: enteredMaxPlayers,
-        description: enteredDescription,
-      });
+      try {
+        await axios.post("/api/group/create", {
+          activityName: enteredActivityName,
+          mapName: enteredMapName,
+          maxPlayers: enteredMaxPlayers,
+          description: enteredDescription,
+        });
+      } catch (error) {
+        console.log("Something went wrong", error);
+      }
     };
+
     if (formIsInValid) return;
 
     try {
@@ -76,6 +83,7 @@ const Page = () => {
     }
 
     clearInputHandler();
+    router.push("/");
   };
 
   return (

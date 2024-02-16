@@ -1,8 +1,19 @@
-import { db } from "@/lib/db";
+import MapListing, { MapListingSchema } from "@/models/MapListing";
 
 export async function POST(req: Request) {
-  const { activityName, mapName, maxPlayers, description } = await req.json();
-  console.log(activityName, mapName, maxPlayers, description);
-  db.sadd(`${mapName}:`, `${activityName}:${maxPlayers}:${description}`);
-  return new Response("OK");
+  try {
+    const { activityName, mapName, maxPlayers, description } = await req.json();
+    if (
+      activityName.trim() === "" ||
+      mapName.trim() === "" ||
+      maxPlayers.trim() === "" ||
+      description.trim() === ""
+    )
+      return new Response("Invalid payload", { status: 422 });
+
+    MapListing.create({ activityName, mapName, maxPlayers, description });
+    return new Response("OK");
+  } catch (error) {
+    return new Response("Something went wrong", { status: 400 });
+  }
 }
