@@ -1,13 +1,15 @@
 "use client";
 
 import useInput from "@/lib/hooks/use-input";
+import UserContext from "@/store/user-context";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 const Page = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const userCtx = useContext(UserContext);
   const {
     value: enteredActivityName,
     isValid: enteredActivityNameIsValid,
@@ -58,16 +60,32 @@ const Page = () => {
 
   const formSubmitionHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    const createGroupListing = async () => {
+    if (!userCtx.userName) return;
+    const createGroupListing = async (): Promise<Response | Error> => {
       try {
-        await axios.post("/api/group/create", {
+        const response = await axios.post("/api/group/create", {
           activityName: enteredActivityName,
           mapName: enteredMapName,
           maxPlayers: enteredMaxPlayers,
           description: enteredDescription,
+          owner: userCtx.userName,
         });
+        if (response.status === 200) {
+          const { roomId } = await response.data;
+          return new Response(
+            JSON.stringify({
+              message: "New room added to database",
+              roomId: roomId,
+            })
+          );
+        } else {
+          return new Response("Something went wrong", {
+            status: response.status,
+          });
+        }
       } catch (error) {
-        console.log("Something went wrong", error);
+        console.log("Something went wrong while creating the Listing", error);
+        return new Response("Error submitting data", { status: 400 });
       }
     };
 
@@ -75,15 +93,18 @@ const Page = () => {
 
     try {
       setIsSubmitting(true);
-      await createGroupListing();
+      const response = await createGroupListing();
+
+      if (response instanceof Response && response.ok) {
+        const newListing = await response.json();
+        const newListingId = newListing.roomId;
+        router.push(`/browse/${newListingId}`);
+      }
     } catch (error) {
       console.log(error);
     } finally {
       setIsSubmitting(false);
     }
-
-    clearInputHandler();
-    router.push("/");
   };
 
   return (
@@ -152,22 +173,27 @@ const Page = () => {
               required
             />
           </div>
-          <div>
-            <button
-              type="submit"
-              className="bg-slate-800 text-white p-2 text-center rounded-md disabled:bg-slate-500 hover:bg-blue-800 hover:text-black"
-              disabled={formIsInValid || isSubmitting}
-            >
-              {isSubmitting ? "Submitting..." : "Create Group"}
-            </button>
-            <button
-              type="reset"
-              className="bg-amber-800 text-white p-2 text-center rounded-md hover:bg-blue-800 hover:text-black"
-              onClick={clearInputHandler}
-            >
-              Clear Inputs
-            </button>
-          </div>
+
+          {userCtx.userName ? (
+            <div>
+              <button
+                type="submit"
+                className="bg-slate-800 text-white p-2 text-center rounded-md disabled:bg-slate-500 hover:bg-blue-800 hover:text-black"
+                disabled={formIsInValid || isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : "Create Group"}
+              </button>
+              <button
+                type="reset"
+                className="bg-amber-800 text-white p-2 text-center rounded-md hover:bg-blue-800 hover:text-black"
+                onClick={clearInputHandler}
+              >
+                Clear Inputs
+              </button>
+            </div>
+          ) : (
+            <div>Please enter your username to be able to create a group</div>
+          )}
         </form>
       </div>
     </div>
