@@ -1,14 +1,14 @@
 "use client";
 
-import UserNameContext from "@/store/userName-context";
+import UserContext from "@/store/user-context";
 import { useContext, useState } from "react";
 
 const UserNameDisplay = () => {
   const [newName, setNewName] = useState("");
   const [validationError, setValidationError] = useState("");
-  const userNameCtx = useContext(UserNameContext);
-  const userNameNotSet = userNameCtx.userName.trim().length === 0;
-  let placeholder = userNameCtx.userName;
+  const userCtx = useContext(UserContext);
+  const userNameNotSet = userCtx.userName.trim().length === 0;
+  let placeholder = userCtx.userName;
   let buttonLabel = "";
   if (userNameNotSet) {
     placeholder = "User.1234 or char name";
@@ -31,12 +31,12 @@ const UserNameDisplay = () => {
       return;
     }
     if (newName.trim().length !== 0) {
-      userNameCtx.addUserName(newName);
+      userCtx.addUserName(newName);
       setValidationError("");
     }
   };
   const handleClearName = () => {
-    userNameCtx.clearUserName();
+    userCtx.clearUserName();
     setNewName("");
   };
   return (
