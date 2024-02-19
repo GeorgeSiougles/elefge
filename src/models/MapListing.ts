@@ -8,8 +8,9 @@ const mapListingMongoDBSchema = new Schema(
   {
     activityName: String,
     mapName: String,
-    maxNumberOfPlayers: String,
+    maxPlayers: String,
     description: String,
+    owner: String,
   },
   {
     timestamps: true,
@@ -26,8 +27,9 @@ export type MapListingType = {
   _id?: string;
   activityName: String;
   mapName: String;
-  maxNumberOfPlayers: String;
+  maxPlayers: String;
   description: String;
+  owner: String;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -35,6 +37,7 @@ export type MapListingType = {
 export const MapListingSchema: ZodType<MapListingType> = z.object({
   activityName: z.string(),
   mapName: z.string(),
-  maxNumberOfPlayers: z.string(),
+  maxPlayers: z.string(),
   description: z.string(),
+  owner: z.string(),
 });
