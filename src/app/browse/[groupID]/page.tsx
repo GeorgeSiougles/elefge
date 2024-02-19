@@ -5,6 +5,6 @@ interface PageProps {
 }
 
 const Page = ({ params }: PageProps) => {
-  return <div>{params.groupId}</div>;
+  return <div>TODO chatting interface{params.groupId}</div>;
 };
 export default Page;
