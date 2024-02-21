@@ -3,16 +3,16 @@ import MapListing, { MapListingType } from "@/models/MapListing";
 export async function GET(req: Request) {
   try {
     const body = await req.json();
-    const { owner } = body;
-    if (!owner) {
+    const { userName } = body;
+    if (!userName) {
       return new Response("No user name provided", { status: 422 });
     }
     // Find one or find all lists?
     const groupListing = (await MapListing.findOne({
-      owner: owner,
+      owner: userName,
     })) as MapListingType;
     if (!groupListing) {
-      return new Response("No Listings found by user: " + owner, {
+      return new Response("No Listings found by user: " + userName, {
         status: 404,
       });
     } else {

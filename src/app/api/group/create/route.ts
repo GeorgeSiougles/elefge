@@ -1,35 +1,23 @@
-import MapListing, { MapListingType } from "@/models/MapListing";
-import { ObjectId } from "mongodb";
+import { db } from "@/lib/db";
+import { auth } from "@clerk/nextjs";
 
 export async function POST(req: Request) {
   try {
-    const { activityName, mapName, maxPlayers, description, owner, _id } =
-      (await req.json()) as MapListingType;
-    if (
-      activityName.trim() === "" ||
-      mapName.trim() === "" ||
-      maxPlayers.trim() === "" ||
-      description.trim() === "" ||
-      owner.trim() === "" ||
-      _id?.trim() === ""
-    )
-      return new Response("Invalid payload", { status: 422 });
-    const newListingId = new ObjectId();
-    MapListing.create({
-      _id: newListingId,
-      activityName,
-      mapName,
-      maxPlayers,
-      description,
-      owner,
-    });
-    return new Response(
-      JSON.stringify({
-        message: "New room added succesfully",
-        roomId: newListingId,
-      })
+    const { userId } = auth();
+    if (!userId) return new Response("Unauthorized", { status: 401 });
+    const body = await req.json();
+    const { userId: requestId } = body;
+    if (!requestId)
+      return new Response("Invalid payload no userId provided", {
+        status: 422,
+      });
+
+    db.sadd(
+      `user:${requestId}:mapName:${body.mapName}:activityName:${body.activityName}:maxPlayerNumber:${body.maxPlayerNumber}:description:${body.desciption}`,
+      { requestId: requestId, mapName: body.mapName }
     );
+    return new Response("Listing created", { status: 201 });
   } catch (error) {
-    return new Response("Something went wrong" + error, { status: 400 });
+    return new Response("Invalid request", { status: 400 });
   }
 }

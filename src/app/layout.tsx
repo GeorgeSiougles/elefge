@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
-import UserContextProvider from "@/store/UserContextProvider";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const routingOptions = [
   {
@@ -30,10 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-teal-600`}>
-        <UserContextProvider>
+        <ClerkProvider>
           <Navbar items={routingOptions} />
           {children}
-        </UserContextProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
