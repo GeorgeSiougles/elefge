@@ -1,35 +1,45 @@
 "use client";
 
+import { mapListingValidator } from "@/lib/validators/MapListing";
+import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface GroupSubmitionFormProps {
   userId: string;
 }
-type FormData = {
-  activityName: String;
-  mapName: String;
-  maxPlayerNumber: String;
-  description: String;
-};
+type FormData = z.infer<typeof mapListingValidator>;
+
 const GroupCreationForm = ({ userId }: GroupSubmitionFormProps) => {
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<FormData>({ resolver: zodResolver(mapListingValidator) });
+
+  const router = useRouter();
   const createGroup = async (data: FormData) => {
     try {
-      await axios.post("/api/group/create", {
+      const response = await axios.post("/api/group/create", {
         userId: userId,
         activityName: data.activityName,
         mapName: data.mapName,
         maxPlayerNumber: data.maxPlayerNumber,
         description: data.description,
       });
+      if (response.status === 201) {
+        //push to created chatroom
+        router.push("/");
+      }
     } catch (error) {
-      console.log("axios error:", error.message);
+      if (error instanceof z.ZodError) {
+        console.log("zod error:", error.message);
+        setError("root", { message: error.message });
+      }
+      console.log(error);
     }
   };
   const onSubmit = (data: FormData) => {
@@ -47,12 +57,14 @@ const GroupCreationForm = ({ userId }: GroupSubmitionFormProps) => {
           {...register("activityName")}
           required
         />
+        <p className="text-red-500">{errors.activityName?.message}</p>
       </div>
       <div className="flex-row my-4 items-center">
         <label className="px-2" htmlFor="mapName">
           Map Name
         </label>
         <input id="mapName" type="text" {...register("mapName")} required />
+        <p className="text-red-500">{errors.mapName?.message}</p>
       </div>
       <div className="flex-row my-4 items-center">
         <label className="px-2" htmlFor="maxPlayerNumber">
@@ -64,6 +76,7 @@ const GroupCreationForm = ({ userId }: GroupSubmitionFormProps) => {
           <option value={"10"}>10</option>
           <option value={"50"}>50</option>
         </select>
+        <p className="text-red-500">{errors.maxPlayerNumber?.message}</p>
       </div>
       <div className="flex-col my-4">
         <label className="px-2" htmlFor="description">
@@ -75,6 +88,7 @@ const GroupCreationForm = ({ userId }: GroupSubmitionFormProps) => {
           {...register("description")}
           required
         />
+        <p className="text-red-500">{errors.description?.message}</p>
       </div>
 
       <div>

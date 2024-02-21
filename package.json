@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^4.29.7",
+    "@hookform/resolvers": "^3.3.4",
     "@upstash/redis": "^1.28.3",
     "axios": "^1.6.7",
     "mongodb": "^6.3.0",
