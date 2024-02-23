@@ -1,11 +1,13 @@
-import { UserButton, auth } from "@clerk/nextjs";
+import { UserButton, auth, currentUser } from "@clerk/nextjs";
 import Link from "next/link";
 
-const UserNameDisplay = () => {
+const UserNameDisplay = async () => {
   const { userId } = auth();
+  const user = await currentUser();
 
   return (
     <div>
+      <div>{user?.username}</div>
       {userId ? (
         <UserButton afterSignOutUrl="/" />
       ) : (

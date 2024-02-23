@@ -89,7 +89,7 @@ const Page = () => {
         <h1>Create Listing</h1>
       </div>
       <div className="border-slate-900 border-8 rounded-lg p-4 w-72">
-        <GroupCreationForm userId={userId} />
+        <GroupCreationForm />
       </div>
     </div>
   );

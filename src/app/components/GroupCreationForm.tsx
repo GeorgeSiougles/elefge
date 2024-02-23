@@ -7,12 +7,9 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-interface GroupSubmitionFormProps {
-  userId: string;
-}
 type FormData = z.infer<typeof mapListingValidator>;
 
-const GroupCreationForm = ({ userId }: GroupSubmitionFormProps) => {
+const GroupCreationForm = () => {
   const {
     register,
     handleSubmit,
@@ -24,7 +21,6 @@ const GroupCreationForm = ({ userId }: GroupSubmitionFormProps) => {
   const createGroup = async (data: FormData) => {
     try {
       const response = await axios.post("/api/group/create", {
-        userId: userId,
         activityName: data.activityName,
         mapName: data.mapName,
         maxPlayerNumber: data.maxPlayerNumber,
@@ -32,7 +28,9 @@ const GroupCreationForm = ({ userId }: GroupSubmitionFormProps) => {
       });
       if (response.status === 201) {
         //push to created chatroom
-        router.push("/");
+        const body = response.data;
+        const newId = body.id;
+        router.push(`/browse/${newId}`);
       }
     } catch (error) {
       if (error instanceof z.ZodError) {

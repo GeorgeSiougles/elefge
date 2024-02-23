@@ -6,6 +6,7 @@ mongoose.Promise = global.Promise;
 
 const mapListingMongoDBSchema = new Schema(
   {
+    mapListingId: String,
     activityName: String,
     mapName: String,
     maxPlayers: String,
@@ -24,7 +25,7 @@ const MapListing =
 export default MapListing;
 
 export type MapListingType = {
-  _id?: string;
+  mapListingId: String;
   activityName: String;
   mapName: String;
   maxPlayers: String;
@@ -35,6 +36,7 @@ export type MapListingType = {
 };
 
 export const MapListingSchema: ZodType<MapListingType> = z.object({
+  mapListingId: z.string(),
   activityName: z.string(),
   mapName: z.string(),
   maxPlayers: z.string(),
