@@ -23,13 +23,11 @@ export async function POST(req: NextRequest) {
       activityName: activityName,
       maxPlayers: maxPlayerNumber,
       description: description,
-      owner: [
-        {
-          userId: userId,
-          username: user.username,
-          email: user.emailAddresses[0].emailAddress,
-        },
-      ],
+      owner: {
+        userId: userId,
+        username: user.username,
+        email: user.emailAddresses[0].emailAddress,
+      },
     };
     await MapListing.create(newListing);
     const responseBody = { id: listingId };

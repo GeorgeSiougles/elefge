@@ -10,8 +10,8 @@ const Listing = ({ listing }: ListingProps) => {
       <div className="flex-1">{listing.mapName}</div>
       <div className="flex-1">
         {Array.isArray(listing.owner)
-          ? listing.owner[0].email
-          : listing.owner.email}
+          ? listing.owner[0].username
+          : listing.owner.username}
       </div>
       <div className="flex-1">{listing.description}</div>
     </div>

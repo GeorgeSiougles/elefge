@@ -12,7 +12,7 @@ const mapListingMongoDBSchema = new Schema(
     mapName: String,
     maxPlayers: String,
     description: String,
-    owner: [{ userId: String, username: String, email: String }],
+    owner: { userId: String, username: String, email: String },
   },
   {
     timestamps: true,
@@ -31,7 +31,7 @@ export type MapListingType = {
   mapName: String;
   maxPlayers: String;
   description: String;
-  owner: User | User[];
+  owner: User;
   createdAt?: string;
   updatedAt?: string;
 };
