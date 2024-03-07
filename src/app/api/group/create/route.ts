@@ -1,7 +1,6 @@
 import { mapListingValidator } from "@/lib/validators/MapListing";
 import MapListing from "@/models/MapListing";
 import { auth, currentUser } from "@clerk/nextjs";
-import { ObjectId } from "mongodb";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -24,7 +23,13 @@ export async function POST(req: NextRequest) {
       activityName: activityName,
       maxPlayers: maxPlayerNumber,
       description: description,
-      owner: user.username,
+      owner: [
+        {
+          userId: userId,
+          username: user.username,
+          email: user.emailAddresses[0].emailAddress,
+        },
+      ],
     };
     await MapListing.create(newListing);
     const responseBody = { id: listingId };

@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { ZodType, z } from "zod";
+import { User, UserSchema } from "./User";
 
 mongoose.connect(process.env.MONGODB_URI!);
 mongoose.Promise = global.Promise;
@@ -11,7 +12,7 @@ const mapListingMongoDBSchema = new Schema(
     mapName: String,
     maxPlayers: String,
     description: String,
-    owner: String,
+    owner: [{ userId: String, username: String, email: String }],
   },
   {
     timestamps: true,
@@ -30,7 +31,7 @@ export type MapListingType = {
   mapName: String;
   maxPlayers: String;
   description: String;
-  owner: String;
+  owner: User | User[];
   createdAt?: string;
   updatedAt?: string;
 };
@@ -41,5 +42,5 @@ export const MapListingSchema: ZodType<MapListingType> = z.object({
   mapName: z.string(),
   maxPlayers: z.string(),
   description: z.string(),
-  owner: z.string(),
+  owner: UserSchema,
 });
