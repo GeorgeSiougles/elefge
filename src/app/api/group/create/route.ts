@@ -1,6 +1,6 @@
 import { mapListingValidator } from "@/lib/validators/MapListing";
 import MapListing from "@/models/MapListing";
-import { auth } from "@clerk/nextjs";
+import { auth, currentUser } from "@clerk/nextjs";
 import { ObjectId } from "mongodb";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
@@ -11,6 +11,9 @@ export async function POST(req: NextRequest) {
   try {
     const { userId } = auth();
     if (!userId) return new Response("Unauthorized", { status: 401 });
+    const user = await currentUser();
+    if (!user) return new Response("Unauthorized", { status: 401 });
+
     const body = await req.json();
     const { mapName, activityName, maxPlayerNumber, description } =
       mapListingValidator.parse(body);
@@ -21,7 +24,7 @@ export async function POST(req: NextRequest) {
       activityName: activityName,
       maxPlayers: maxPlayerNumber,
       description: description,
-      owner: userId,
+      owner: user.username,
     };
     await MapListing.create(newListing);
     const responseBody = { id: listingId };
