@@ -10,7 +10,7 @@ const routingOptions = [
     label: "Create Group",
   },
   {
-    href: "/browse",
+    href: "/",
     label: "Browse Groups",
   },
 ];
