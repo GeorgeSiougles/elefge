@@ -14,12 +14,13 @@ const Navbar = (props: NavbarProps) => {
     <nav className="flex justify-between bg-amber-700 w-screen p-4 items-center border-b-8 rounded-b-xl border-emerald-700">
       <div className="flex">
         {props.items.map((item, index) => (
-          <div
+          <Link
             className="bg-amber-200 p-4 mx-2 rounded-xl hover:bg-amber-400 hover:text-slate-500"
             key={index}
+            href={item.href}
           >
-            <Link href={item.href}>{item.label}</Link>
-          </div>
+            {item.label}
+          </Link>
         ))}
       </div>
       <div>
